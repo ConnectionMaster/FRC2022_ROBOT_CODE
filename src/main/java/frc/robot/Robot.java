@@ -5,12 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.InactiveShooting;
 import frc.robot.commands.ShootingCommand;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -28,7 +30,9 @@ public class Robot extends TimedRobot {
   public static long startTime, telepStartTime;
   public static int angle = 0;
   public static boolean shouldContinue = false;
-  public static PIDController pid = new PIDController(kp, ki, kd);
+  public static Encoder leftEncoder = new Encoder(Constants.Drive.Left_Rear_Motor, Constants.Drive.Left_Front_Motor, true, EncodingType.k4X);
+  public static Encoder rightEncoder = new Encoder(Constants.Drive.Right_Rear_Motor, Constants.Drive.Right_Front_Motor, true, EncodingType.k4X);
+  public static PIDController pid = new PIDController(0.5, 0.5, 0.1);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -101,6 +105,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    leftEncoder.reset();
+    rightEncoder.reset();
   }
 
   /** This function is called periodically during operator control. */
@@ -111,6 +117,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.getDriverSubsystem().feed();
     m_robotContainer.teleopPeriodic();
 
+    //this next: if, else if and else are for the auto aim in the X axis.
     if(m_robotContainer.controller.getLeftY() != 0 && !shouldContinue || m_robotContainer.controller.getRightX() != 0 && !shouldContinue){
       m_robotContainer.getDriverSubsystem().y_speed = m_robotContainer.controller.getLeftY();
       m_robotContainer.getDriverSubsystem().x_speed = m_robotContainer.controller.getRightX();
@@ -123,6 +130,15 @@ public class Robot extends TimedRobot {
     else {
       m_robotContainer.getDriverSubsystem().StopDrive();
     }
+
+    //this is for testing the PID
+    if(m_robotContainer.controller.getXButton()){
+      //we need to get the distance from the hub and the limelight and use the example below to affect the power of the motors.
+      //motor.set(pid.calculate(encoder.getDistance(), setpoint));
+      //the setpoint is the distance from the hub and the camera
+    }
+
+
   }
 
   @Override
