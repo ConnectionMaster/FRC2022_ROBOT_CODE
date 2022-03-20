@@ -20,7 +20,7 @@ public final class Constants {
         final public static int Left_Front_Motor = 1;
     }
     public final class Climb {
-        final public static int ClimbMotor = 7, PullMotor = 6;
+        final public static int ClimbMotor = 4 , PullMotor = 6;
         final public static double ExpandPower = 0.7 ; 
         final public static double PullUpPower = 0.5 ;
         final public static double PullDownPower = -0.5;

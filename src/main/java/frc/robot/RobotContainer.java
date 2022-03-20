@@ -14,6 +14,7 @@ import frc.robot.commands.ClimbingCommand;
 import frc.robot.commands.CollectorCommand;
 import frc.robot.commands.ReleasClimbingString;
 import frc.robot.commands.ShootingCommand;
+import frc.robot.commands.pullInCommand;
 import frc.robot.commands.InactiveShooting;
 import frc.robot.commands.OpenCloseBlocker;
 import frc.robot.subsystems.ClimbingSubSystem;
@@ -131,6 +132,7 @@ public class RobotContainer {
     this.CommandStickButtons[3].whileHeld(this.getPullOutCommand());
     this.CommandStickButtons[6].whileHeld(new ReleasClimbingString());
     this.CommandStickButtons[4].whileHeld(new ClimbingCommand());
+    this.CommandStickButtons[11].whileHeld(new pullInCommand());
     this.CommandStickButtons[9].whileHeld(new OpenCloseBlocker(false));
     this.CommandStickButtons[10].whileHeld(new OpenCloseBlocker(true));
   }
