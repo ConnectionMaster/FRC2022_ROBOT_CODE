@@ -27,8 +27,6 @@ public final class Constants {
         final public static double releasePower = -0.45 ; 
         final public static int LimitSwitchPort = 3 ;
         final public static int stopPower = 0 ;
-
-        
     }
     public final class Shoot{
         final public static int ShootMotor = 5;
@@ -46,7 +44,4 @@ public final class Constants {
         final public static double CollectPower = 0.9 ;
         final public static int stopPower = 0 ;
     }
-    public final class color{
-    }
-    
 }
