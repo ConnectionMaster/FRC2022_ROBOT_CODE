@@ -121,13 +121,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    this.tankStick1 = new Joystick(1);
     this.CommandStick = new Joystick(0);
-    this.tankStick2 = new Joystick(2);
     this.controller = new XboxController(3);
     for(int i = 0; i < CommandStickButtons.length; i++){
       CommandStickButtons[i] = new JoystickButton(this.CommandStick, i);
-      DriveStickButtons[i] = new JoystickButton(this.tankStick2, i);
     }
     this.CommandStickButtons[2].whileHeld(this.getCollectorCommand());
     this.CommandStickButtons[1].whenInactive(this.getInactiveShooting());
