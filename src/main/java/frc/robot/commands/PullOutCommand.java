@@ -14,16 +14,12 @@ public class PullOutCommand extends CommandBase{
     public void execute() {
         
         if(m_robotContainer.getClimbingSubSystem().getSwitch() && !interrupted)
-        {
-            
             m_robotContainer.getClimbingSubSystem().pull(Constants.Climb.PullUpPower);
-        }
         else
         {
             interrupted = true;
             end(true);
         }
-        
     }
     @Override
     public void end(boolean interrupted) {

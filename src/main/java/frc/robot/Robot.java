@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.InactiveShooting;
 import frc.robot.commands.ShootingCommand;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.controller.PIDController;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot {
   public static long startTime, telepStartTime;
   public static int angle = 0;
   public static boolean shouldContinue = false;
+  public static PIDController pid = new PIDController(kp, ki, kd);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.

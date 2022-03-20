@@ -13,7 +13,6 @@ public class ClimbingCommand extends CommandBase {
 
     @Override
     public void execute() {
-        System.out.println("climbing!");
         m_robotContainer.getClimbingSubSystem().expand(Constants.Climb.ExpandPower);
     }
     @Override
