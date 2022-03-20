@@ -15,10 +15,13 @@ public class ArcadeDriveCommand extends CommandBase{
     }
     @Override
     public void execute() {
-        if(m_robotContainer.getDriverSubsystem().x >= 0.4) m_robotContainer.getDriverSubsystem().x = 0.4;
-        else if(m_robotContainer.getDriverSubsystem().x <= -0.4) m_robotContainer.getDriverSubsystem().x = -0.4;
-        m_robotContainer.getDriverSubsystem().feed();
-        m_robotContainer.getDriverSubsystem().ArcadeDrive(m_robotContainer.controller.getRightX(), -m_robotContainer.controller.getLeftY());
+        if(m_robotContainer.getDriverSubsystem().x_speed >= 0.4)
+            m_robotContainer.getDriverSubsystem().x_speed = 0.4;
+        else if(m_robotContainer.getDriverSubsystem().x_speed <= -0.4) 
+            m_robotContainer.getDriverSubsystem().x_speed = -0.4;
+        
+            m_robotContainer.getDriverSubsystem().feed();
+        m_robotContainer.getDriverSubsystem().ArcadeDrive(m_robotContainer.getDriverSubsystem().x_speed, -m_robotContainer.getDriverSubsystem().y_speed);
     }
     @Override
     public void end(boolean interrupted) {

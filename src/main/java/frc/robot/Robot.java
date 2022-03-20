@@ -110,13 +110,16 @@ public class Robot extends TimedRobot {
     m_robotContainer.teleopPeriodic();
 
     if(m_robotContainer.controller.getLeftY() != 0 && !shouldContinue || m_robotContainer.controller.getRightX() != 0 && !shouldContinue){
-      m_robotContainer.getDriverSubsystem().y = m_robotContainer.controller.getLeftY();
-      m_robotContainer.getDriverSubsystem().x = m_robotContainer.controller.getRightX();
+      m_robotContainer.getDriverSubsystem().y_speed = m_robotContainer.controller.getLeftY();
+      m_robotContainer.getDriverSubsystem().x_speed = m_robotContainer.controller.getRightX();
     }
     else if(m_robotContainer.controller.getYButton()){
-      if(m_robotContainer.m_Limelight.getTx() > 4) m_robotContainer.getDriverSubsystem().x += 0.1;
-      else if(m_robotContainer.m_Limelight.getTx() < -4) m_robotContainer.getDriverSubsystem().x -= 0.1;
+      if(m_robotContainer.m_Limelight.getTx() > 4) m_robotContainer.getDriverSubsystem().x_speed -= 0.1;
+      else if(m_robotContainer.m_Limelight.getTx() < -4) m_robotContainer.getDriverSubsystem().x_speed += 0.1;
       else m_robotContainer.getDriverSubsystem().StopDrive();
+    }
+    else {
+      m_robotContainer.getDriverSubsystem().StopDrive();
     }
   }
 

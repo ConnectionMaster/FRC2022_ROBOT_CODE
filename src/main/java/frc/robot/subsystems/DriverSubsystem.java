@@ -14,7 +14,7 @@ public class DriverSubsystem extends SubsystemBase {
     public MotorControllerGroup SPD_Forward;
     public MotorControllerGroup SPD_BackWard;
     private DifferentialDrive diff;
-    public static double x = 0,y = 0;
+    public  double x_speed = 0,y_speed = 0;
 
     public DriverSubsystem(){
         this.MotorRightFront =new WPI_TalonSRX(Constants.Drive.Right_Front_Motor);
