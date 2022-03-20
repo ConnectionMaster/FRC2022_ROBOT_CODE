@@ -28,7 +28,6 @@ public class Robot extends TimedRobot {
   public static long startTime, telepStartTime;
   public static int angle = 0;
   public static boolean shouldContinue = false;
-  public static PIDController pid = new PIDController(kp, ki, kd);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -79,6 +78,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    //if we shoot use this Autonomous code
+    /*
     if(System.currentTimeMillis() - startTime <= 3000) {m_robotContainer.getShootingSubSystem().shoot(0.80);}//need to change when the limelight is here
     if(System.currentTimeMillis()- startTime >= 2000 && System.currentTimeMillis() - startTime < 2500){m_robotContainer.getShootingSubSystem().open();}
     else if(System.currentTimeMillis() - startTime >= 3500 && System.currentTimeMillis() - startTime < 4250) {m_robotContainer.getShootingSubSystem().close();}
@@ -88,7 +89,9 @@ public class Robot extends TimedRobot {
     {
       m_robotContainer.getDriverSubsystem().SPD_Forward.set(0.4);
       m_robotContainer.getDriverSubsystem().SPD_BackWard.set(0.4);
-    }
+    }*/
+
+    
   }
 
   @Override
