@@ -1,0 +1,49 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2638
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 LucidaGrande;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh16380\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 [needs to be in teleopinit/autoInit\'85]\
+public static PIDcontroller pid = new PIDController(0.5 , 0.5, 0.1);\
+int mode = 0; \
+\
+\
+\
+teleopPri()\{
+\f1 \
+if (controller.Bbuttonpressed) \
+\
+distance_from_the_hub = getDistance();        [
+\f0 \'93info is taken from the limelight\'94];\
+\
+if (
+\f1 distance_from_the_hub>0.5 && distance_from_the_hub<=1)\{\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 	this.motor.set(-pid.calculate(distance_from_the_hub, 1));	\
+	mode = 1; \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \}\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0 \cf0 if (
+\f1 distance_from_the_hub>1.5 && distance_from_the_hub<=2)\{\
+	this.motor.set(-pid.calculate(distance_from_the_hub, 2));	\
+
+\f0 	mode =2; 
+\f1 		\
+\}\
+\
+
+\f0 if (
+\f1 distance_from_the_hub>2.5 && distance_from_the_hub<=3)\{\
+	this.motor.set(pid.calculate(distance_from_the_hub, 3));	\
+	mode = 3 ;\
+\}\
+\
+shoot (mode); the mode represent the distance from the hub and tells to the the motor how much to shot.\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\}}
