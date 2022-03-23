@@ -67,8 +67,9 @@ public class RobotContainer {
     this.inactiveShooting = new InactiveShooting();
     this.collectorCommand = new CollectorCommand();
     this.pullOutCommand = new PullOutCommand();
-    this.arcadeDriveCommand = new ArcadeDriveCommand();
+    //this.arcadeDriveCommand = new ArcadeDriveCommand();
     CommandScheduler.getInstance().setDefaultCommand(driverSubsystem, new ArcadeDriveCommand());
+    //driverSubsystem.getDiffDrive().setSafetyEnabled(false);
     //this.arcadeDriveCommand = new ArcadeDriveCommand();
     configureButtonBindings();
     //this.driverControllerCommand = new DriverControllerCommand();
@@ -132,6 +133,10 @@ public class RobotContainer {
     for(int i = 0; i < CommandStickButtons.length; i++){
       CommandStickButtons[i] = new JoystickButton(this.CommandStick, i);
     }
+    this.CommandStickButtons[1].whileHeld(new ShootingCommand());
+    this.CommandStickButtons[1].whenInactive(new InactiveShooting());
+    this.CommandStickButtons[2].whileHeld(new CollectorCommand());
+
     this.CommandStickButtons[2].whileHeld(this.getCollectorCommand());
     this.CommandStickButtons[1].whenInactive(this.getInactiveShooting());
     this.CommandStickButtons[4].whileHeld(this.getPullOutCommand());

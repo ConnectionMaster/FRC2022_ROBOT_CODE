@@ -7,14 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.CollectorCommand;
-import frc.robot.commands.InactiveShooting;
-import frc.robot.commands.ShootingCommand;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.controller.PIDController;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -25,20 +19,13 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   public static RobotContainer m_robotContainer;
   public static long startTime;
-  public static boolean shouldContinue = false;
-  public static PIDController pid = new PIDController(0.4, 0, 0);
-  public static PIDController pid_wheels = new PIDController(0.5, 0.5 , 0.1);
-  public final static double shootPowerForMeter = 0.52023121387;
   public static double distanceFromLimelightToGoal;
-  public static double leftSideDistance, rightSideDistance;
-  public static WPI_TalonSRX motor = new WPI_TalonSRX(20);
-  
   public static double targetOffsetAngle_Vertical;
-  public static double limelightMountAngleDegrees = 43.0,limelightLensHeight = 0.68;
+  public static double limelightMountAngleDegrees = 51.5,limelightLensHeight = 0.73;
   public static double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
   public static double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-
-  int mode;
+  final public static double precentPowerPerMeter = 0.3468208092485549;
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -61,7 +48,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     
-    m_robotContainer.getDriverSubsystem().feed();
+    //m_robotContainer.getDriverSubsystem().feed();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -86,12 +73,12 @@ public class Robot extends TimedRobot {
     }
     startTime = System.currentTimeMillis();
   }
-
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
     // shoot to the hub from the auto line 
-    if(System.currentTimeMillis() - startTime <= 3000) {m_robotContainer.getShootingSubSystem().shoot(/*0.8*/);}//need to change when the limelight is here
+    /*
+    if(System.currentTimeMillis() - startTime <= 3000) {m_robotContainer.getShootingSubSystem().shoot();}need to change when the limelight is here
     if(System.currentTimeMillis()- startTime >= 2000 && System.currentTimeMillis() - startTime < 2500){m_robotContainer.getShootingSubSystem().open();}
     else if(System.currentTimeMillis() - startTime >= 3500 && System.currentTimeMillis() - startTime < 4000) {m_robotContainer.getShootingSubSystem().close();}
     else if(System.currentTimeMillis() - startTime >= 3750 && System.currentTimeMillis() - startTime < 4000) 
@@ -103,9 +90,31 @@ public class Robot extends TimedRobot {
     {
       m_robotContainer.getDriverSubsystem().SPD_Forward.set(0.4);
       m_robotContainer.getDriverSubsystem().SPD_BackWard.set(0.4);
-    }
-  }
+    }*/
 
+    //the glorious Autonomous 
+    targetOffsetAngle_Vertical = m_robotContainer.m_Limelight.getTy();
+    limelightMountAngleDegrees = 51.5;
+    limelightLensHeight = 0.73;
+    angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+    angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+
+    Constants.Drive.distanceFromLimelightToGoal = (Constants.Shoot.goalHeight - limelightLensHeight)/Math.tan(angleToGoalRadians);
+  
+    if(System.currentTimeMillis()- startTime <= 3000) m_robotContainer.getShootingSubSystem().shoot();
+    if(System.currentTimeMillis() - startTime <= 2000) m_robotContainer.autoPosition(distanceFromLimelightToGoal);
+    if(System.currentTimeMillis()- startTime >= 2500 && System.currentTimeMillis() - startTime < 3000)m_robotContainer.getShootingSubSystem().open();
+    if(System.currentTimeMillis()- startTime >= 3000 && System.currentTimeMillis() - startTime < 3500) m_robotContainer.getShootingSubSystem().stopBlocker() ;
+    if(System.currentTimeMillis()- startTime >= 4000 && System.currentTimeMillis() - startTime < 4500)m_robotContainer.getShootingSubSystem().close();
+    if(System.currentTimeMillis()- startTime >= 4500 && System.currentTimeMillis() - startTime < 5000)
+    {
+      m_robotContainer.getShootingSubSystem().stopBlocker();     
+      m_robotContainer.getShootingSubSystem().stop();
+    }
+    if(System.currentTimeMillis() - startTime  >= 5000 && System.currentTimeMillis() - startTime < 7500) Constants.Drive.movement = 0.7;
+    else Constants.Drive.movement = 0;
+  }
+  static boolean b = false;
   @Override
   public void teleopInit() {
     // This makes sure that the autonomous stops running when
@@ -117,50 +126,43 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
   }
-
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    m_robotContainer.CommandStickButtons[1].whileHeld(new ShootingCommand());
-    m_robotContainer.CommandStickButtons[1].whenInactive(new InactiveShooting());
-    m_robotContainer.CommandStickButtons[2].whileHeld(new CollectorCommand());
-
     m_robotContainer.getDriverSubsystem().feed();
     m_robotContainer.teleopPeriodic();
     
-    double targetOffsetAngle_Vertical = m_robotContainer.m_Limelight.getTy();
-    double limelightMountAngleDegrees = 51.5, limelightLensHeight = 0.73;
-    double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-    double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+    targetOffsetAngle_Vertical = m_robotContainer.m_Limelight.getTy();
+    limelightMountAngleDegrees = 51.5;
+    limelightLensHeight = 0.73;
+    angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+    angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
-    distanceFromLimelightToGoal = (Constants.Shoot.goalHeight - limelightLensHeight)/Math.tan(angleToGoalRadians);
-    System.out.println(distanceFromLimelightToGoal);
-    // if(m_robotContainer.m_Limelight.getTv() > 0) Constants.Shoot.ShootPower = distanceFromLimelightToGoal * 0.52023121139;
-    // else Constants.Shoot.ShootPower = 0.7;
-    Constants.Shoot.ShootPower = 0.65;
-    if(m_robotContainer.controller.getYButton())
-    {
-        m_robotContainer.autoAim();
-    }
-
-    if(m_robotContainer.controller.getXButton())
-    {
-      m_robotContainer.autoPosition(distanceFromLimelightToGoal);
-    }
+    Constants.Drive.distanceFromLimelightToGoal = (Constants.Shoot.goalHeight - limelightLensHeight)/Math.tan(angleToGoalRadians);
+  
+    if(m_robotContainer.controller.getYButton()) m_robotContainer.autoAim();
+    if(m_robotContainer.controller.getXButton()) m_robotContainer.autoPosition(distanceFromLimelightToGoal);
 
     if(!m_robotContainer.controller.getXButton() && !m_robotContainer.controller.getYButton())
     {
       Constants.Drive.rotation = m_robotContainer.controller.getRightX();
       Constants.Drive.movement = m_robotContainer.controller.getLeftY();
     }
-}
+    if(m_robotContainer.controller.getBButtonPressed())
+      b = !b;
+    if(b) 
+      Constants.Shoot.ShootPower = distanceFromLimelightToGoal*precentPowerPerMeter;
+    else 
+      Constants.Shoot.ShootPower = 0.55;
+  
+      m_robotContainer.m_Limelight.logData();
+  }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
-
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}

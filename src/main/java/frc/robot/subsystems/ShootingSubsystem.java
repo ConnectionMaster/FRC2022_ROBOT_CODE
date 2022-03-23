@@ -28,6 +28,6 @@ public class ShootingSubsystem extends SubsystemBase{
     }
 
     public void stop(){
-        this.shootingMotor.set(ControlMode.PercentOutput,Constants.Shoot.stopPower);
+        this.shootingMotor.stopMotor();
     }
 }
