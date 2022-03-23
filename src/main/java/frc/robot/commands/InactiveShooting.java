@@ -15,16 +15,9 @@ public class InactiveShooting extends CommandBase{
     @Override
     public void execute()
     {
-        if(System.currentTimeMillis() - this.startTime <= Constants.Shoot.InactiveTime){ 
-            m_robotContainer.getShootingSubsytem().close();
-            //System.out.println("Close!");
+        if(System.currentTimeMillis() - this.startTime <= Constants.Shoot.InactiveTime) m_robotContainer.getShootingSubsytem().close();
+        else m_robotContainer.getShootingSubsytem().stopBlocker();
         
-        }
-        else{
-            //System.out.println("Stop!");
- 
-            m_robotContainer.getShootingSubsytem().stopBlocker();
-        }
     }
 
     @Override

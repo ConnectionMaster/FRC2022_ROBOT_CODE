@@ -6,19 +6,15 @@ public class Limelight extends SubsystemBase{
     public Limelight(){
         limelightNT = NetworkTableInstance.getDefault();
     }
-
     public int getTv(){
-        return this.limelightNT.getTable("limelight").getEntry("tv").getNumber(9999).intValue();
+        return this.limelightNT.getTable("limelight").getEntry("tv").getNumber(0).intValue();
     }
-
     public double getTx(){
         return this.limelightNT.getTable("limelight").getEntry("tx").getNumber(9999).doubleValue();
     }
-
     public double getTy(){
-        return this.limelightNT.getTable("limelight").getEntry("ty").getNumber(0.0).doubleValue();
+        return this.limelightNT.getTable("limelight").getEntry("ty").getNumber(9999).doubleValue();
     }
-
     public double getTa(){
         return this.limelightNT.getTable("limelight").getEntry("ta").getNumber(9999).doubleValue();
     }

@@ -33,7 +33,7 @@ public class ClimbingSubSystem extends SubsystemBase {
         expend_motor.set(ControlMode.PercentOutput, speed);
     }
     public void stop(){
-        expend_motor.set(ControlMode.PercentOutput, Constants.Climb.stopPower);
-        pull_motor.set(ControlMode.PercentOutput, Constants.Climb.stopPower);
+        expend_motor.stopMotor();
+        pull_motor.stopMotor();
     }
 }

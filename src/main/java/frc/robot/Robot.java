@@ -7,8 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.CollectorCommand;
 import frc.robot.commands.InactiveShooting;
 import frc.robot.commands.ShootingCommand;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 /**
@@ -20,14 +24,21 @@ import edu.wpi.first.math.controller.PIDController;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   public static RobotContainer m_robotContainer;
-  //public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-  //public static DigitalInput sw = new DigitalInput(3);
-  //public static BuiltInAccelerometer acc = new BuiltInAccelerometer();
-  //public static DigitalInput _switch2 = new DigitalInput(1);
- // public static double angle = 0;
-  public static long startTime, telepStartTime;
-  public static int angle = 0;
+  public static long startTime;
   public static boolean shouldContinue = false;
+  public static PIDController pid = new PIDController(0.4, 0, 0);
+  public static PIDController pid_wheels = new PIDController(0.5, 0.5 , 0.1);
+  public final static double shootPowerForMeter = 0.52023121387;
+  public static double distanceFromLimelightToGoal;
+  public static double leftSideDistance, rightSideDistance;
+  public static WPI_TalonSRX motor = new WPI_TalonSRX(20);
+  
+  public static double targetOffsetAngle_Vertical;
+  public static double limelightMountAngleDegrees = 43.0,limelightLensHeight = 0.68;
+  public static double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+  public static double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+
+  int mode;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -38,8 +49,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    //m_robotContainer.getShootingSubsytem().servo.setAngle(200); 
-    
+    targetOffsetAngle_Vertical = m_robotContainer.m_Limelight.getTy();
   }
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like
@@ -50,6 +60,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    
+    m_robotContainer.getDriverSubsystem().feed();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -78,20 +90,20 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    //if we shoot use this Autonomous code
-    /*
-    if(System.currentTimeMillis() - startTime <= 3000) {m_robotContainer.getShootingSubSystem().shoot(0.80);}//need to change when the limelight is here
+    // shoot to the hub from the auto line 
+    if(System.currentTimeMillis() - startTime <= 3000) {m_robotContainer.getShootingSubSystem().shoot(/*0.8*/);}//need to change when the limelight is here
     if(System.currentTimeMillis()- startTime >= 2000 && System.currentTimeMillis() - startTime < 2500){m_robotContainer.getShootingSubSystem().open();}
-    else if(System.currentTimeMillis() - startTime >= 3500 && System.currentTimeMillis() - startTime < 4250) {m_robotContainer.getShootingSubSystem().close();}
-    else if(System.currentTimeMillis() - startTime >= 3750 && System.currentTimeMillis() - startTime < 4000) {m_robotContainer.getShootingSubSystem().stopBlocker();}
-    //this is it
+    else if(System.currentTimeMillis() - startTime >= 3500 && System.currentTimeMillis() - startTime < 4000) {m_robotContainer.getShootingSubSystem().close();}
+    else if(System.currentTimeMillis() - startTime >= 3750 && System.currentTimeMillis() - startTime < 4000) 
+    {
+      m_robotContainer.getShootingSubSystem().stopBlocker();
+      m_robotContainer.getShootingSubSystem().stop();
+    }
     else if(System.currentTimeMillis() - startTime >= 4000 && System.currentTimeMillis() - startTime < 7000) 
     {
       m_robotContainer.getDriverSubsystem().SPD_Forward.set(0.4);
       m_robotContainer.getDriverSubsystem().SPD_BackWard.set(0.4);
-    }*/
-
-    
+    }
   }
 
   @Override
@@ -100,7 +112,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    CommandScheduler.getInstance().setDefaultCommand(m_robotContainer.getDriverSubsystem(),m_robotContainer.getArcadeDriveCommand()); 
+    //CommandScheduler.getInstance().setDefaultCommand(m_robotContainer.getDriverSubsystem(),m_robotContainer.getArcadeDriveCommand()); 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -111,22 +123,37 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     m_robotContainer.CommandStickButtons[1].whileHeld(new ShootingCommand());
     m_robotContainer.CommandStickButtons[1].whenInactive(new InactiveShooting());
+    m_robotContainer.CommandStickButtons[2].whileHeld(new CollectorCommand());
+
     m_robotContainer.getDriverSubsystem().feed();
     m_robotContainer.teleopPeriodic();
+    
+    double targetOffsetAngle_Vertical = m_robotContainer.m_Limelight.getTy();
+    double limelightMountAngleDegrees = 51.5, limelightLensHeight = 0.73;
+    double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+    double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
-    if(m_robotContainer.controller.getLeftY() != 0 && !shouldContinue || m_robotContainer.controller.getRightX() != 0 && !shouldContinue){
-      m_robotContainer.getDriverSubsystem().y_speed = m_robotContainer.controller.getLeftY();
-      m_robotContainer.getDriverSubsystem().x_speed = m_robotContainer.controller.getRightX();
+    distanceFromLimelightToGoal = (Constants.Shoot.goalHeight - limelightLensHeight)/Math.tan(angleToGoalRadians);
+    System.out.println(distanceFromLimelightToGoal);
+    // if(m_robotContainer.m_Limelight.getTv() > 0) Constants.Shoot.ShootPower = distanceFromLimelightToGoal * 0.52023121139;
+    // else Constants.Shoot.ShootPower = 0.7;
+    Constants.Shoot.ShootPower = 0.65;
+    if(m_robotContainer.controller.getYButton())
+    {
+        m_robotContainer.autoAim();
     }
-    else if(m_robotContainer.controller.getYButton()){
-      if(m_robotContainer.m_Limelight.getTx() > 4) m_robotContainer.getDriverSubsystem().x_speed -= 0.1;
-      else if(m_robotContainer.m_Limelight.getTx() < -4) m_robotContainer.getDriverSubsystem().x_speed += 0.1;
-      else m_robotContainer.getDriverSubsystem().StopDrive();
+
+    if(m_robotContainer.controller.getXButton())
+    {
+      m_robotContainer.autoPosition(distanceFromLimelightToGoal);
     }
-    else {
-      m_robotContainer.getDriverSubsystem().StopDrive();
+
+    if(!m_robotContainer.controller.getXButton() && !m_robotContainer.controller.getYButton())
+    {
+      Constants.Drive.rotation = m_robotContainer.controller.getRightX();
+      Constants.Drive.movement = m_robotContainer.controller.getLeftY();
     }
-  }
+}
 
   @Override
   public void testInit() {

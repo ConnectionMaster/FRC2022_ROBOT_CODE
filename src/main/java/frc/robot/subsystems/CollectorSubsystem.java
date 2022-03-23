@@ -15,6 +15,6 @@ public class CollectorSubsystem extends SubsystemBase {
             this.theOpener.set(ControlMode.PercentOutput , power);
     }
     public void stop(){
-        this.theOpener.set(ControlMode.PercentOutput, Constants.collect.stopPower);
+        this.theOpener.stopMotor();
     }
 }

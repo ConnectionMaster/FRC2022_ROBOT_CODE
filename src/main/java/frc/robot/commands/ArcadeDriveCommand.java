@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import static frc.robot.Robot.m_robotContainer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class ArcadeDriveCommand extends CommandBase{
@@ -15,13 +16,8 @@ public class ArcadeDriveCommand extends CommandBase{
     }
     @Override
     public void execute() {
-        if(m_robotContainer.getDriverSubsystem().x_speed >= 0.4)
-            m_robotContainer.getDriverSubsystem().x_speed = 0.4;
-        else if(m_robotContainer.getDriverSubsystem().x_speed <= -0.4) 
-            m_robotContainer.getDriverSubsystem().x_speed = -0.4;
-        
-            m_robotContainer.getDriverSubsystem().feed();
-        m_robotContainer.getDriverSubsystem().ArcadeDrive(m_robotContainer.getDriverSubsystem().x_speed, -m_robotContainer.getDriverSubsystem().y_speed);
+        m_robotContainer.getDriverSubsystem().feed();
+        m_robotContainer.getDriverSubsystem().ArcadeDrive(Constants.Drive.rotation, -Constants.Drive.movement);
     }
     @Override
     public void end(boolean interrupted) {

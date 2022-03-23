@@ -8,9 +8,9 @@ import frc.robot.Constants;
 
 public class DriverSubsystem extends SubsystemBase {
     private WPI_TalonSRX MotorRightFront , MotorRightRear;
-    public MotorControllerGroup SPD_Right;
+    public static MotorControllerGroup SPD_Right;
     private WPI_TalonSRX MotorLeftFront , MotorLeftRear;
-    public MotorControllerGroup SPD_Left;
+    public static MotorControllerGroup SPD_Left;
     public MotorControllerGroup SPD_Forward;
     public MotorControllerGroup SPD_BackWard;
     private DifferentialDrive diff;
@@ -23,10 +23,11 @@ public class DriverSubsystem extends SubsystemBase {
         this.MotorLeftFront = new WPI_TalonSRX(Constants.Drive.Left_Front_Motor);
         this.MotorLeftRear = new WPI_TalonSRX(Constants.Drive.Left_Rear_Motor);
         SPD_Left = new MotorControllerGroup(this.MotorLeftFront, this.MotorLeftRear);
-        this.diff = new DifferentialDrive(this.SPD_Left, this.SPD_Right);
-        SPD_Forward = new MotorControllerGroup(this.MotorLeftFront, this.MotorRightFront);
-        SPD_BackWard = new MotorControllerGroup(this.MotorLeftRear, this.MotorRightRear);
-        
+        this.diff = new DifferentialDrive(SPD_Left, SPD_Right);
+        //this.diff.setSafetyEnabled(false);
+    }
+    public DifferentialDrive getDiffDrive(){
+        return this.diff;
     }
     public void feed(){
         this.diff.feedWatchdog();
@@ -35,13 +36,13 @@ public class DriverSubsystem extends SubsystemBase {
         this.diff.arcadeDrive(stickY*0.75, 0.75*stickX, true);
     }
     public void TankDrive(double left, double right){
-        this.diff.tankDrive(left*0.9, right*0.9, true);
+        this.diff.tankDrive(left*0.9, right*0.9);
     }
     public void spin(double power){
         this.diff.tankDrive(power, -power, true);
     }
     public void StopDrive(){
-        this.diff.arcadeDrive(Constants.Shoot.stopPower, Constants.Shoot.stopPower, true);
+        this.diff.stopMotor();
     }
     public void GoForward(double speed) {
         this.diff.tankDrive(speed, speed, true);

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArcadeDriveCommand;
 import frc.robot.commands.ClimbingCommand;
@@ -23,6 +24,7 @@ import frc.robot.subsystems.DriverSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ShootingSubsystem;
 import frc.robot.commands.PullOutCommand;
+import edu.wpi.first.math.controller.BangBangController;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -55,6 +57,7 @@ public class RobotContainer {
   public Joystick tankStick1,tankStick2,CommandStick;
   public JoystickButton CommandStickButtons[] = new JoystickButton[12], DriveStickButtons[] = new JoystickButton[12];
   public XboxController controller;
+  public BangBangController bangController;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -65,6 +68,8 @@ public class RobotContainer {
     this.collectorCommand = new CollectorCommand();
     this.pullOutCommand = new PullOutCommand();
     this.arcadeDriveCommand = new ArcadeDriveCommand();
+    CommandScheduler.getInstance().setDefaultCommand(driverSubsystem, new ArcadeDriveCommand());
+    //this.arcadeDriveCommand = new ArcadeDriveCommand();
     configureButtonBindings();
     //this.driverControllerCommand = new DriverControllerCommand();
   }//FRCTRP4661
@@ -129,13 +134,43 @@ public class RobotContainer {
     }
     this.CommandStickButtons[2].whileHeld(this.getCollectorCommand());
     this.CommandStickButtons[1].whenInactive(this.getInactiveShooting());
-    this.CommandStickButtons[3].whileHeld(this.getPullOutCommand());
-    this.CommandStickButtons[6].whileHeld(new ReleasClimbingString());
-    this.CommandStickButtons[4].whileHeld(new ClimbingCommand());
-    this.CommandStickButtons[11].whileHeld(new pullInCommand());
+    this.CommandStickButtons[4].whileHeld(this.getPullOutCommand());
+    this.CommandStickButtons[5].whileHeld(new ReleasClimbingString());
+    this.CommandStickButtons[3].whileHeld(new ClimbingCommand());
+    this.CommandStickButtons[6].whileHeld(new pullInCommand());
     this.CommandStickButtons[9].whileHeld(new OpenCloseBlocker(false));
     this.CommandStickButtons[10].whileHeld(new OpenCloseBlocker(true));
   }
+  
+  public void autoAim(){
+    double threshold = 0.2;
+    
+    if(this.m_Limelight.getTv() > 0){
+      if(this.m_Limelight.getTx() <= threshold && this.m_Limelight.getTx() >= -threshold)
+      {
+        driverSubsystem.getDiffDrive().stopMotor();
+        System.out.println("[debug] stopping aiming");
+      }
+      else if(!(this.m_Limelight.getTx() <= threshold && this.m_Limelight.getTx() >= -threshold))
+      {
+        System.out.println("in the loop");
+        if((this.m_Limelight.getTx() >= threshold)) Constants.Drive.rotation = 0.7;
+        if((this.m_Limelight.getTx() <= -threshold)) Constants.Drive.rotation = -0.7;
+      }
+    }
+  }
+
+  public void autoPosition(double distance){
+    if(distance <= (1.73+0.1) && distance >= (1.73-0.1))
+      driverSubsystem.getDiffDrive().stopMotor();
+    else
+    {
+      if(distance >= (1.73+0.1)) Constants.Drive.movement = -0.7;
+      if(distance <= (1.73-0.1)) Constants.Drive.movement = 0.7;
+    }
+  }
+
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
