@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.cameraserver.CameraServer;
-
+import edu.wpi.first.networktables.NetworkTableInstance;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -24,8 +24,8 @@ public class Robot extends TimedRobot {
   public static double limelightMountAngleDegrees = 51.5,limelightLensHeight = 0.73;
   public static double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
   public static double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-  final public static double precentPowerPerMeter = 0.3468208092485549;
-  
+  final public static double precentPowerPerMeter = 0.3368208092485549;
+  static boolean b = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -93,14 +93,16 @@ public class Robot extends TimedRobot {
     }*/
 
     //the glorious Autonomous 
-    targetOffsetAngle_Vertical = m_robotContainer.m_Limelight.getTy();
+    NetworkTableInstance in = NetworkTableInstance.getDefault();
+
+    targetOffsetAngle_Vertical = in.getTable("limelight").getEntry("ty").getNumber(0).doubleValue();
     limelightMountAngleDegrees = 51.5;
     limelightLensHeight = 0.73;
     angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
     angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
     Constants.Drive.distanceFromLimelightToGoal = (Constants.Shoot.goalHeight - limelightLensHeight)/Math.tan(angleToGoalRadians);
-  
+    Constants.Shoot.ShootPower = 0.55;
     if(System.currentTimeMillis()- startTime <= 3000) m_robotContainer.getShootingSubSystem().shoot();
     if(System.currentTimeMillis() - startTime <= 2000) m_robotContainer.autoPosition(distanceFromLimelightToGoal);
     if(System.currentTimeMillis()- startTime >= 2500 && System.currentTimeMillis() - startTime < 3000)m_robotContainer.getShootingSubSystem().open();
@@ -111,12 +113,15 @@ public class Robot extends TimedRobot {
       m_robotContainer.getShootingSubSystem().stopBlocker();     
       m_robotContainer.getShootingSubSystem().stop();
     }
-    if(System.currentTimeMillis() - startTime  >= 5000 && System.currentTimeMillis() - startTime < 7500) Constants.Drive.movement = 0.7;
+    if(System.currentTimeMillis() - startTime  >= 5000 && System.currentTimeMillis() - startTime < 6500) Constants.Drive.movement = 0.7;
     else Constants.Drive.movement = 0;
+    
+    
+
   }
-  static boolean b = false;
   @Override
   public void teleopInit() {
+    Constants.Shoot.ShootPower = 0.6;
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -131,7 +136,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     m_robotContainer.getDriverSubsystem().feed();
     m_robotContainer.teleopPeriodic();
-    
+
     targetOffsetAngle_Vertical = m_robotContainer.m_Limelight.getTy();
     limelightMountAngleDegrees = 51.5;
     limelightLensHeight = 0.73;
@@ -139,9 +144,9 @@ public class Robot extends TimedRobot {
     angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
     Constants.Drive.distanceFromLimelightToGoal = (Constants.Shoot.goalHeight - limelightLensHeight)/Math.tan(angleToGoalRadians);
-  
+
     if(m_robotContainer.controller.getYButton()) m_robotContainer.autoAim();
-    if(m_robotContainer.controller.getXButton()) m_robotContainer.autoPosition(distanceFromLimelightToGoal);
+    if(m_robotContainer.controller.getXButton()) m_robotContainer.autoPosition(Constants.Drive.distanceFromLimelightToGoal);
 
     if(!m_robotContainer.controller.getXButton() && !m_robotContainer.controller.getYButton())
     {
@@ -149,14 +154,12 @@ public class Robot extends TimedRobot {
       Constants.Drive.movement = m_robotContainer.controller.getLeftY();
     }
     if(m_robotContainer.controller.getBButtonPressed())
-      b = !b;
-    if(b) 
-      Constants.Shoot.ShootPower = distanceFromLimelightToGoal*precentPowerPerMeter;
-    else 
-      Constants.Shoot.ShootPower = 0.55;
-  
-      m_robotContainer.m_Limelight.logData();
-  }
+     b = !b;
+    if(b)
+      Constants.Shoot.ShootPower = precentPowerPerMeter * distanceFromLimelightToGoal;
+    else
+      Constants.Shoot.ShootPower = 0.6;
+    }
 
   @Override
   public void testInit() {

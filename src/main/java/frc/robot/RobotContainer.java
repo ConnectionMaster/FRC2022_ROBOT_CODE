@@ -40,6 +40,7 @@ public class RobotContainer {
   private ShootingCommand shootingCommand;
   private InactiveShooting inactiveShooting;
   
+  
   private final CollectorSubsystem collectorSubsystem = new CollectorSubsystem();
   private CollectorCommand collectorCommand;
   

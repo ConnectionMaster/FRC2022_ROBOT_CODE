@@ -42,7 +42,7 @@ public class Constants {
         final public static double CloseBlockerPower = 0.3 ;
         final public static double OpenBlockerPower = -0.3 ;
         final public static double goalHeight = 2.63;
-        final public static double limelightMountAngleDegrees = 51.5;
+        final public static double limelightMountAngleDegrees = 55.5;
         final public static double limelightLensHeight = 0.73;
     }
     public final class collect{
