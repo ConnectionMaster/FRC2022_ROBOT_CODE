@@ -1,0 +1,39 @@
+[needs to be in teleopinit/autoInit…]
+public static PIDcontroller pid = new PIDController(0.5 , 0.5, 0.1);
+int mode = 0; 
+
+
+
+teleopPri(){
+if (controller.Bbuttonpressed) 
+
+distance_from_the_hub = getDistance();        [“info is taken from the limelight”];
+
+if (distance_from_the_hub>0.5 && distance_from_the_hub<=1){
+	this.motor.set(-pid.calculate(distance_from_the_hub, 1));	
+	mode = 1; 
+}
+if (distance_from_the_hub>1 && distance_from_the_hub<=1.5){
+	this.motor.set(pid.calculate(distance_from_the_hub, 1));	
+	mode = 1; 
+}
+if (distance_from_the_hub>1.5 && distance_from_the_hub<=2){
+	this.motor.set(-pid.calculate(distance_from_the_hub, 2));	
+	mode =2; 		
+}
+if (distance_from_the_hub>2 && distance_from_the_hub<=2.5){
+	this.motor.set(pid.calculate(distance_from_the_hub, 2));	
+	mode = 2; 
+}
+
+if (distance_from_the_hub>2.5 && distance_from_the_hub<=3){
+	this.motor.set(pid.calculate(distance_from_the_hub, 3));	
+	mode = 3 ;
+}
+if (distance_from_the_hub>3 && distance_from_the_hub<=3.5){
+	this.motor.set(pid.calculate(distance_from_the_hub, 3));	
+	mode = 3; 
+}
+shoot (mode); the mode represent the distance from the hub and tells to the the motor how much to shot.
+
+}
