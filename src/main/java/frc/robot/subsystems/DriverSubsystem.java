@@ -24,7 +24,6 @@ public class DriverSubsystem extends SubsystemBase {
         this.MotorLeftRear = new WPI_TalonSRX(Constants.Drive.Left_Rear_Motor);
         SPD_Left = new MotorControllerGroup(this.MotorLeftFront, this.MotorLeftRear);
         this.diff = new DifferentialDrive(SPD_Left, SPD_Right);
-        //this.diff.setSafetyEnabled(false);
     }
     public DifferentialDrive getDiffDrive(){
         return this.diff;
@@ -38,13 +37,7 @@ public class DriverSubsystem extends SubsystemBase {
     public void TankDrive(double left, double right){
         this.diff.tankDrive(left*0.9, right*0.9);
     }
-    public void spin(double power){
-        this.diff.tankDrive(power, -power, true);
-    }
     public void StopDrive(){
         this.diff.stopMotor();
-    }
-    public void GoForward(double speed) {
-        this.diff.tankDrive(speed, speed, true);
     }
 }

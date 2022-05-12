@@ -5,13 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Encoder;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -29,17 +26,7 @@ public class Robot extends TimedRobot {
   public static double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
   final public static double precentPowerPerMeter = 0.3368208092485549;
   static boolean b = false;
-  //public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-  //public static DigitalInput sw = new DigitalInput(3);
-  //public static BuiltInAccelerometer acc = new BuiltInAccelerometer();
-  //public static DigitalInput _switch2 = new DigitalInput(1);
- // public static double angle = 0;
-  public static int angle = 0;
   public static boolean shouldContinue = false;
-  public static Encoder leftEncoder = new Encoder(Constants.Drive.Left_Rear_Motor, Constants.Drive.Left_Front_Motor, true, EncodingType.k4X);
-  public static Encoder rightEncoder = new Encoder(Constants.Drive.Right_Rear_Motor, Constants.Drive.Right_Front_Motor, true, EncodingType.k4X);
-  public static PIDController pid = new PIDController(0.5, 0.5, 0.1);
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
