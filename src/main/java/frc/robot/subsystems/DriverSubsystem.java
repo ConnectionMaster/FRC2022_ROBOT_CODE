@@ -32,7 +32,7 @@ public class DriverSubsystem extends SubsystemBase {
         this.diff.feedWatchdog();
     }
     public void ArcadeDrive(double stickY, double stickX){
-        this.diff.arcadeDrive(stickY*0.75, 0.75*stickX, true);
+        this.diff.arcadeDrive(stickY*0.65, 0.65*stickX, true);
     }
     public void TankDrive(double left, double right){
         this.diff.tankDrive(left*0.9, right*0.9);

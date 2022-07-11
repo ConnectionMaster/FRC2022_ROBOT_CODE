@@ -34,10 +34,10 @@ public class Constants {
     public static class Shoot{
         final public static int ShootMotor = 7;
         final public static int BlockerMotor = 11;
-        final public static int InactiveTime = 500;
+        final public static int InactiveTime = 1000;
         public static double ShootPower = 0.55;
         final public static int preparing_Time_for_shoot = 2000;
-        final public static int Ready_to_shoot = 2500;
+        final public static int Ready_to_shoot = 3000;
         final public static int stopPower = 0 ;
         final public static double CloseBlockerPower = 0.3 ;
         final public static double OpenBlockerPower = -0.3 ;
