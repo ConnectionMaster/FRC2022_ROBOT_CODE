@@ -11,7 +11,7 @@ public class pullInCommand extends CommandBase{
     }
     @Override
     public void execute() {
-        m_robotContainer.getClimbingSubSystem().pull(Constants.Climb.PullUpPower);        
+        m_robotContainer.getClimbingSubSystem().pull(Constants.Climb.PullUpPower);//releasing string for saftey    
     }
     @Override
     public void end(boolean interrupted) {

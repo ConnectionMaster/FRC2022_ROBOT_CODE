@@ -6,15 +6,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class CollectorSubsystem extends SubsystemBase {
-    private WPI_TalonSRX theOpener;
+    private WPI_TalonSRX collectingMotor;
     public CollectorSubsystem(){
-        this.theOpener = new WPI_TalonSRX(Constants.collect.CollectMotor);
+        this.collectingMotor = new WPI_TalonSRX(Constants.collect.CollectMotor);//creating a motor
         
     }
-    public void Collect(double power){
-            this.theOpener.set(ControlMode.PercentOutput , power);
+    public void Collect(double power){//setting the motor at a correct amount of speed so we could collect balls
+            this.collectingMotor.set(ControlMode.PercentOutput , power);
     }
     public void stop(){
-        this.theOpener.stopMotor();
+        this.collectingMotor.stopMotor();
     }
 }

@@ -10,7 +10,7 @@ public class CollectorCommand extends CommandBase {
     }
     @Override
     public void execute() {
-        m_robotContainer.getCollectorSubsystem().Collect(Constants.collect.CollectPower);
+        m_robotContainer.getCollectorSubsystem().Collect(Constants.collect.CollectPower);//collecting balls
     }
     @Override
     public void end(boolean interrupted) {

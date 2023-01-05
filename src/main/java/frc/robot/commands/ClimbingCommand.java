@@ -13,7 +13,7 @@ public class ClimbingCommand extends CommandBase {
 
     @Override
     public void execute() {
-        m_robotContainer.getClimbingSubSystem().expand(Constants.Climb.ExpandPower);
+        m_robotContainer.getClimbingSubSystem().expand(Constants.Climb.ExpandPower);//expending the rod which contains the hook that we use to climb with
     }
     @Override
     public void end(boolean interrupted) {

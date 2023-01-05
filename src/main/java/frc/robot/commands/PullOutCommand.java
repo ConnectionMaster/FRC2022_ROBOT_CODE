@@ -12,12 +12,11 @@ public class PullOutCommand extends CommandBase{
     }
     @Override
     public void execute() {
-        
-        if(m_robotContainer.getClimbingSubSystem().getSwitch() && !interrupted)
+        if(m_robotContainer.getClimbingSubSystem().getSwitch() && !interrupted)//pulling the string to climb until the limit switch tells us to stop
             m_robotContainer.getClimbingSubSystem().pull(-Constants.Climb.PullUpPower);
         else
         {
-            interrupted = true;
+            interrupted = true;//stoping the entire command using the WPILib.
             end(true);
         }
     }

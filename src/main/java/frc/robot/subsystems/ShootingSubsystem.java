@@ -9,25 +9,23 @@ public class ShootingSubsystem extends SubsystemBase{
     private WPI_TalonSRX blocker;
     
     public ShootingSubsystem(){
-        this.shootingMotor = new WPI_TalonSRX(Constants.Shoot.ShootMotor);
+        this.shootingMotor = new WPI_TalonSRX(Constants.Shoot.ShootMotor);//creating a motor
         this.blocker = new WPI_TalonSRX(Constants.Shoot.BlockerMotor);
     }
     public void shoot(/* double shoot */){
         this.shootingMotor.set(ControlMode.PercentOutput, Constants.Shoot.ShootPower);
     }
-    public void open(){
+    public void open(){//opening the blocker so balls can come through
         this.blocker.set(ControlMode.PercentOutput, Constants.Shoot.OpenBlockerPower);
     }
-    public void stopBlocker()
-    {
+    public void stopBlocker(){ //stoping the blocker so he would stay in place (thank you WPILib)
         this.blocker.stopMotor();
     }
-    public void close()
-    {
+    public void close(){ //closing the blocker so no more balls can come through.
         this.blocker.set(ControlMode.PercentOutput, Constants.Shoot.CloseBlockerPower);
     }
 
-    public void stop(){
+    public void stop(){//stoping the shooting motor (thank you WPILib)
         this.shootingMotor.stopMotor();
     }
 }

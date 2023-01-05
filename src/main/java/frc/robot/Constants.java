@@ -47,7 +47,6 @@ public class Constants {
     }
     public final class collect{
         final public static int CollectMotor = 10 ;
-
         final public static double CollectPower = 0.8 ;
         final public static int stopPower = 0 ;
     }

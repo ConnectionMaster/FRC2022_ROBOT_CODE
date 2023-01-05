@@ -12,16 +12,16 @@ public class ArcadeDriveCommand extends CommandBase{
     }
     @Override
     public void initialize() {
-        m_robotContainer.getDriverSubsystem().feed();
+        m_robotContainer.getDriverSubsystem().feed();//feeding the diff object data (thanks WPILib)
     }
     @Override
     public void execute() {
-        m_robotContainer.getDriverSubsystem().feed();
-        m_robotContainer.getDriverSubsystem().ArcadeDrive(Constants.Drive.rotation, -Constants.Drive.movement);
+        m_robotContainer.getDriverSubsystem().feed();//feeding the diff object data (thanks WPILib)
+        m_robotContainer.getDriverSubsystem().ArcadeDrive(Constants.Drive.rotation, -Constants.Drive.movement);//updatiing the movement of the robot based on gloval variables
     }
     @Override
     public void end(boolean interrupted) {
-        m_robotContainer.getDriverSubsystem().feed();
+        m_robotContainer.getDriverSubsystem().feed();//stoping the robot from moving
         m_robotContainer.getDriverSubsystem().StopDrive();
     }
 }

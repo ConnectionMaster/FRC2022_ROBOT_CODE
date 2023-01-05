@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ArcadeDriveCommand;
@@ -33,28 +32,16 @@ import edu.wpi.first.math.controller.BangBangController;
  */
 public class RobotContainer {
 
-  public final Limelight m_Limelight = new Limelight();
+  public final Limelight m_Limelight = new Limelight();//creaing all of the commands and subsystem
   // The robot's subsystems and commands are defined here...
   
   private final ShootingSubsystem shootingSubsystem =  new ShootingSubsystem();
-  private ShootingCommand shootingCommand;
-  private InactiveShooting inactiveShooting;
-  
-  
   private final CollectorSubsystem collectorSubsystem = new CollectorSubsystem();
-  private CollectorCommand collectorCommand;
-  
   private final ClimbingSubSystem climbingSubSystem =new ClimbingSubSystem();
-  private ClimbingCommand climbingCommand;
   // private final ControllerDriveSubsystem controllerDriveSubsystem = new ControllerDriveSubsystem();
   // private DriverControllerCommand driverControllerCommand;
 
   public static final DriverSubsystem driverSubsystem = new DriverSubsystem();
-  private ArcadeDriveCommand arcadeDriveCommand;
-
-
-  private PullOutCommand pullOutCommand;
-  
   public Joystick tankStick1,tankStick2,CommandStick;
   public JoystickButton CommandStickButtons[] = new JoystickButton[12], DriveStickButtons[] = new JoystickButton[12];
   public XboxController controller;
@@ -63,33 +50,15 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-    
-    //this.shootingCommand = new ShootingCommand();
-    this.inactiveShooting = new InactiveShooting();
-    this.collectorCommand = new CollectorCommand();
-    this.pullOutCommand = new PullOutCommand();
-    //this.arcadeDriveCommand = new ArcadeDriveCommand();
     CommandScheduler.getInstance().setDefaultCommand(driverSubsystem, new ArcadeDriveCommand());
     //driverSubsystem.getDiffDrive().setSafetyEnabled(false);
     //this.arcadeDriveCommand = new ArcadeDriveCommand();
     configureButtonBindings();
     //this.driverControllerCommand = new DriverControllerCommand();
   }//FRCTRP4661
-  public void teleopPeriodic(){
-    driverSubsystem.feed();
-  }
-  public ShootingSubsystem getShootingSubsytem(){
+  
+  public ShootingSubsystem getShootingSubsytem(){//to much getters for the Commands and subsystems.
     return this.shootingSubsystem;
-  }
-  public Command getShootingCommand(){
-    return this.shootingCommand;
-  }
-  public Command getInactiveShooting()
-  {
-    return this.inactiveShooting;
-  }
-  public Joystick getStick(){
-    return this.tankStick1;
   }
   public DriverSubsystem getDriverSubsystem(){
     return driverSubsystem;
@@ -99,21 +68,6 @@ public class RobotContainer {
   }
   public CollectorSubsystem getCollectorSubsystem(){
     return this.collectorSubsystem;
-  }
-  public Joystick getTankStick(){
-    return this.tankStick2;
-  }
-  public ArcadeDriveCommand getArcadeDriveCommand(){
-    return this.arcadeDriveCommand;
-  }
-  public Command getCollectorCommand(){
-    return this.collectorCommand;
-  }
-  public Command getclimbingCommand(){
-    return this.climbingCommand;
-  }
-  public Command getPullOutCommand(){
-    return this.pullOutCommand;
   }
   public ShootingSubsystem getShootingSubSystem(){
     return this.shootingSubsystem;
@@ -129,18 +83,19 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    this.CommandStick = new Joystick(0);
+    this.CommandStick = new Joystick(0);//creating the joystick and the xbox controller
     this.controller = new XboxController(3);
+
     for(int i = 0; i < CommandStickButtons.length; i++){
-      CommandStickButtons[i] = new JoystickButton(this.CommandStick, i);
+      CommandStickButtons[i] = new JoystickButton(this.CommandStick, i);//setting up a value for each button in the joystick
     }
+    //configering the buttons
     this.CommandStickButtons[1].whileHeld(new ShootingCommand());
     this.CommandStickButtons[1].whenInactive(new InactiveShooting());
     this.CommandStickButtons[2].whileHeld(new CollectorCommand());
-
-    this.CommandStickButtons[2].whileHeld(this.getCollectorCommand());
-    this.CommandStickButtons[1].whenInactive(this.getInactiveShooting());
-    this.CommandStickButtons[4].whileHeld(this.getPullOutCommand());
+    this.CommandStickButtons[2].whileHeld(new CollectorCommand());
+    this.CommandStickButtons[1].whenInactive(new InactiveShooting());
+    this.CommandStickButtons[4].whileHeld(new PullOutCommand());
     this.CommandStickButtons[5].whileHeld(new ReleasClimbingString());
     this.CommandStickButtons[3].whileHeld(new ClimbingCommand());
     this.CommandStickButtons[6].whileHeld(new pullInCommand());
@@ -148,7 +103,7 @@ public class RobotContainer {
     this.CommandStickButtons[10].whileHeld(new OpenCloseBlocker(true));
   }
   
-  public void autoAim(){
+  public void autoAim(){//positioning the robot infront of the target
     double threshold = 0.2;
     
     if(this.m_Limelight.getTv() > 0){
@@ -166,7 +121,7 @@ public class RobotContainer {
     }
   }
 
-  public void autoPosition(double distance){
+  public void autoPosition(double distance){//positioning the robot at a correct distance from the target
     if(distance <= (1.73+0.1) && distance >= (1.73-0.1))
       driverSubsystem.getDiffDrive().stopMotor();
     else
